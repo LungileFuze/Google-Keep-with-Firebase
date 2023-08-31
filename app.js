@@ -1,3 +1,20 @@
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDVQKXXRW05itXToTtt78yiFXjITVkMty0",
+  authDomain: "keep-d4a67.firebaseapp.com",
+  projectId: "keep-d4a67",
+  storageBucket: "keep-d4a67.appspot.com",
+  messagingSenderId: "333465798452",
+  appId: "1:333465798452:web:4aa807989f8cbc5dc1c761"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+console.log(firebase)
+
+// Initialize the FirebaseUI Widget using Firebase.
+const auth = firebase.auth()
+console.log(auth)
 class Note {
     constructor(id, title, text) {
         this.id = id;
@@ -5,7 +22,6 @@ class Note {
         this.text = text;
     }
 }
-
 class App {
     constructor() {
         // localStorage.setItem('test',JSON.stringify(['123']))
@@ -29,7 +45,16 @@ class App {
         this.$closeModalForm = document.querySelector("#modal-button")
         this.$sidebar = document.querySelector(".sidebar")
         this.$sidebarActiveItem = document.querySelector(".active-item")
+        // Initialize the FirebaseUI Widget using Firebase.
+        this.ui = new firebaseui.auth.AuthUI(auth);
 
+        this.ui.start('#firebaseui-auth-container', {
+            signInOptions: [
+              firebase.auth.EmailAuthProvider.PROVIDER_ID
+            ],
+            // Other config options...
+          });
+          
         this.addEventListeners()
     }
 
