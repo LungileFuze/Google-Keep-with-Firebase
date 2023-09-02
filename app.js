@@ -50,6 +50,7 @@ class App {
         this.$app = document.querySelector("#app")
         this.$firebaseAuthContainer = document.querySelector("#firebaseui-auth-container")
         this.$authUserText = document.querySelector(".auth-user")
+        this.$logoutButton = document.querySelector(".logout")
 
         // Initialize the FirebaseUI Widget using Firebase.
         this.ui = new firebaseui.auth.AuthUI(auth);
@@ -71,6 +72,15 @@ class App {
           });
     }
 
+    handleSignout() {
+        firebase.auth().signOut().then(() => {
+            // Sign-out successful.
+            this.redirectToAuth()
+          }).catch((error) => {
+            // An error happened.
+            console.log("ERROR OCCURED", error)
+          });
+    }
     redirectToApp() {
         this.$firebaseAuthContainer.style.display = "none"
         this.$app.style.display = "block"
@@ -78,7 +88,7 @@ class App {
 
     redirectToAuth() {
         this.$firebaseAuthContainer.style.display = "block"
-        this.$app.style.display = "auth"
+        this.$app.style.display = "none"
 
         this.ui.start('#firebaseui-auth-container', {
             signInOptions: [
@@ -114,6 +124,10 @@ class App {
 
         this.$sidebar.addEventListener("mouseout", (event) => {
             this.handleToggleSidebar()
+        })
+
+        this.$logoutButton.addEventListener("click", (event) => {
+            this.handleSignout()
         })
 
     }

@@ -7,6 +7,10 @@
     font-family: 'Roboto', sans-serif;
 }
 
+#app {
+    display: none;
+}
+
 .material-icons-outlined {
     padding: 8px;
 }
@@ -46,6 +50,7 @@ nav {
 }
 
 .auth-user {
+    margin-right: 5px;
     cursor: pointer;
 }
 
