@@ -10,11 +10,25 @@ const firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-console.log(firebase)
 
 // Initialize the FirebaseUI Widget using Firebase.
 const auth = firebase.auth()
-console.log(auth)
+
+// Initialize Cloud Firestore and get a reference to the service
+const db = firebase.firestore();
+console.log(db)
+
+db.collection("users").add({
+    first: "Ada",
+    last: "Lovelace",
+    born: 1815
+})
+.then((docRef) => {
+    console.log("Document written with ID: ", docRef.id);
+})
+.catch((error) => {
+    console.error("Error adding document: ", error);
+});
 class Note {
     constructor(id, title, text) {
         this.id = id;
@@ -64,7 +78,6 @@ class App {
             if (user) {
               this.$authUserText.innerHTML = user.displayName
               this.redirectToApp()
-              console.log(user)
             } else {
               // User is signed out
               this.redirectToAuth()
