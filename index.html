@@ -13,8 +13,8 @@
 
 </head>
 <body>
-    <main>
-        <div id="firebaseui-auth-container"></div>
+    <div id="firebaseui-auth-container"></div>
+    <div id="app">
         <nav>
             <div class="logo-area">
                 <div class="tooltip">
@@ -72,8 +72,8 @@
                     <span class="tooltip-text">Profile</span>
                 </div>
             </div>
-        </nav>
-
+    </nav>
+    <main>
         <div class="main-container">
             <div class="sidebar">
                 <div class="side-item active-item">
@@ -266,17 +266,15 @@
             </div>
         </div>
     </main>
-   
+    </div>
+    
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script> 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script> 
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-       
-        // const auth = firebase.auth()
-        // console.log(auth)
-      </script>
+    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cuid/1.3.8/browser-cuid.min.js"
     referrerpolicy="no-referrer"></script>

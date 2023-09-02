@@ -45,8 +45,39 @@ class App {
         this.$closeModalForm = document.querySelector("#modal-button")
         this.$sidebar = document.querySelector(".sidebar")
         this.$sidebarActiveItem = document.querySelector(".active-item")
+
+
+        this.$app = document.querySelector("#app")
+        this.$firebaseAuthContainer = document.querySelector("#firebaseui-auth-container")
+        this.$app.style.display = "none"
+
         // Initialize the FirebaseUI Widget using Firebase.
         this.ui = new firebaseui.auth.AuthUI(auth);
+
+        this.haddleAuth()
+        this.addEventListeners()
+    }
+
+    haddleAuth() {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              this.redirectToApp()
+              console.log(user)
+            } else {
+              // User is signed out
+              this.redirectToAuth()
+            }
+          });
+    }
+
+    redirectToApp() {
+        this.$firebaseAuthContainer.style.display = "none"
+        this.$app.style.display = "block"
+    }
+
+    redirectToAuth() {
+        this.$firebaseAuthContainer.style.display = "block"
+        this.$app.style.display = "auth"
 
         this.ui.start('#firebaseui-auth-container', {
             signInOptions: [
@@ -54,8 +85,6 @@ class App {
             ],
             // Other config options...
           });
-          
-        this.addEventListeners()
     }
 
     addEventListeners() {
