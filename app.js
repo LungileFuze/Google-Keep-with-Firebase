@@ -18,16 +18,34 @@ const auth = firebase.auth()
 const db = firebase.firestore();
 console.log(db)
 
-db.collection("users").add({
-    first: "Ada",
-    last: "Lovelace",
-    born: 1815
-})
-.then((docRef) => {
-    console.log("Document written with ID: ", docRef.id);
-})
-.catch((error) => {
-    console.error("Error adding document: ", error);
+// Add a new document in collection "cities"
+// db.collection("users").doc("actuallySignedinUser").set({
+//     notes: [
+//         {
+//             id: "123455555TjjfdkY",
+//             title: "Testing",
+//             text: "Note Testing"
+//         }
+//    ]
+// })
+// .then(() => {
+//     console.log("Document successfully written!");
+// })
+// .catch((error) => {
+//     console.error("Error writing document: ", error);
+// });
+
+var docRef = db.collection("users").doc("actuallySignedinUser");
+
+docRef.get().then((doc) => {
+    if (doc.exists) {
+        console.log("Document data:", doc.data().notes);
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such document!");
+    }
+}).catch((error) => {
+    console.log("Error getting document:", error);
 });
 class Note {
     constructor(id, title, text) {
