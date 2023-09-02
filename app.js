@@ -18,16 +18,31 @@ const auth = firebase.auth()
 const db = firebase.firestore();
 console.log(db)
 
-db.collection("users").add({
-    first: "Ada",
-    last: "Lovelace",
-    born: 1815
+// Add a new document in collection "cities"
+db.collection("users").doc("actuallySignedinUser").set({
+    notes: [
+        {
+            id: "123455555TjjfdkY",
+            title: "Testing",
+            text: "Note Testing"
+        },
+        {
+            id: "3455555Tjjfdk1",
+            title: "Testing",
+            text: "Note Testing"
+        },
+        {
+            id: "55555Tjjfd2",
+            title: "Testing",
+            text: "Note Testing"
+        }
+   ]
 })
-.then((docRef) => {
-    console.log("Document written with ID: ", docRef.id);
+.then(() => {
+    console.log("Document successfully written!");
 })
 .catch((error) => {
-    console.error("Error adding document: ", error);
+    console.error("Error writing document: ", error);
 });
 class Note {
     constructor(id, title, text) {
