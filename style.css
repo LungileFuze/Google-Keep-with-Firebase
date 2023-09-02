@@ -7,6 +7,10 @@
     font-family: 'Roboto', sans-serif;
 }
 
+#app {
+    display: none;
+}
+
 .material-icons-outlined {
     padding: 8px;
 }
@@ -37,6 +41,17 @@ nav {
 }
 .profile-action-area {
     display: flex;
+}
+
+.profile-action-area .tooltip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-user {
+    margin-right: 5px;
+    cursor: pointer;
 }
 
 .tooltip {
