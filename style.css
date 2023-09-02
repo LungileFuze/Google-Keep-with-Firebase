@@ -39,6 +39,16 @@ nav {
     display: flex;
 }
 
+.profile-action-area .tooltip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-user {
+    cursor: pointer;
+}
+
 .tooltip {
     position: relative;
 }

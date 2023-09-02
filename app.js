@@ -49,7 +49,7 @@ class App {
 
         this.$app = document.querySelector("#app")
         this.$firebaseAuthContainer = document.querySelector("#firebaseui-auth-container")
-        this.$app.style.display = "none"
+        this.$authUserText = document.querySelector(".auth-user")
 
         // Initialize the FirebaseUI Widget using Firebase.
         this.ui = new firebaseui.auth.AuthUI(auth);
@@ -62,6 +62,7 @@ class App {
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
               this.redirectToApp()
+              this.$authUserText.innerHTML = user.displayName
               console.log(user)
             } else {
               // User is signed out
