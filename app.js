@@ -58,11 +58,13 @@ class App {
     constructor() {
         // localStorage.setItem('test',JSON.stringify(['123']))
         // console.log(JSON.parse(localStorage.getItem('test')))
-        this.notes = JSON.parse(localStorage.getItem('notes')) || []
+        this.notes = []
         console.log(this.notes)
         this.notes = [new Note("abc1", "test Title", "test Text")]
         this.$selectedNoteId = ""
         this.miniSidebar = true
+        this.userId - ""
+
 
         this.$activeForm = document.querySelector(".active-form")
         this.$inactiveForm = document.querySelector(".inactive-form")
@@ -89,11 +91,14 @@ class App {
 
         this.haddleAuth()
         this.addEventListeners()
+        this.displayNotes()
     }
 
     haddleAuth() {
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
+              console.log(user.uid)  
+              this.userId = user.uid
               this.$authUserText.innerHTML = user.displayName
               this.redirectToApp()
             } else {
@@ -127,6 +132,8 @@ class App {
                   // User successfully signed in.
                   // Return type determines whether we continue the redirect automatically
                   // or whether we leave that to developer to handle.
+                  console,log(userId)
+                  this.userId = authResult.user.uid
                   this.$authUserText.innerHTML = user.displayName
                   this.redirectToApp()
                   return true;
@@ -153,7 +160,7 @@ class App {
             event.preventDefault()
             const title = this.$noteTitle.value
             const text = this.$noteText.value
-            this.addNotes({title, text})
+            this.addNote({title, text})
             this.closeInactiveForm()
         })
 
@@ -185,7 +192,7 @@ class App {
            this.openActiveForm()
         }
         else if(!isInactiveFormClickedOn && !isActiveFormClickedOn) {
-            this.addNotes({title, text})
+            this.addNote({title, text})
             this.closeInactiveForm()
         }
     }
@@ -235,9 +242,9 @@ class App {
         this.$noteText.value = ""
     }
 
-    addNotes({title,text}) {
+    addNote({title,text}) {
         if(text != "") {
-            const newNote = new Note(cuid(), title, text)
+            const newNote = {id:cuid(), title, text}
             this.notes = [...this.notes, newNote]
             this.render()
         }
@@ -294,7 +301,7 @@ class App {
     }
 
     saveNotes() {
-        localStorage.setItem('test',JSON.stringify(this.notes))
+        // localStorage.setItem('notes',JSON.stringify(this.notes))
     }
 
     render() {
