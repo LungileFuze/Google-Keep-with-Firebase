@@ -18,35 +18,18 @@ const auth = firebase.auth()
 const db = firebase.firestore();
 console.log(db)
 
-// Add a new document in collection "cities"
-// db.collection("users").doc("actuallySignedinUser").set({
-//     notes: [
-//         {
-//             id: "123455555TjjfdkY",
-//             title: "Testing",
-//             text: "Note Testing"
-//         }
-//    ]
-// })
-// .then(() => {
-//     console.log("Document successfully written!");
-// })
-// .catch((error) => {
-//     console.error("Error writing document: ", error);
+// var docRef = db.collection("users").doc("actuallySignedinUser");
+
+// docRef.get().then((doc) => {
+//     if (doc.exists) {
+//         console.log("Document data:", doc.data().notes);
+//     } else {
+//         // doc.data() will be undefined in this case
+//         console.log("No such document!");
+//     }
+// }).catch((error) => {
+//     console.log("Error getting document:", error);
 // });
-
-var docRef = db.collection("users").doc("actuallySignedinUser");
-
-docRef.get().then((doc) => {
-    if (doc.exists) {
-        console.log("Document data:", doc.data().notes);
-    } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-    }
-}).catch((error) => {
-    console.log("Error getting document:", error);
-});
 class Note {
     constructor(id, title, text) {
         this.id = id;
@@ -59,8 +42,8 @@ class App {
         // localStorage.setItem('test',JSON.stringify(['123']))
         // console.log(JSON.parse(localStorage.getItem('test')))
         this.notes = []
-        console.log(this.notes)
-        this.notes = [new Note("abc1", "test Title", "test Text")]
+        // console.log(this.notes)
+        // this.notes = [new Note("abc1", "test Title", "test Text")]
         this.$selectedNoteId = ""
         this.miniSidebar = true
         this.userId - ""
@@ -301,7 +284,16 @@ class App {
     }
 
     saveNotes() {
-        // localStorage.setItem('notes',JSON.stringify(this.notes))
+        // Add a new document in collection "users"
+    db.collection("users").doc(this.userId).set({
+        notes: this.notes
+    })
+        .then(() => {
+            console.log("Document successfully written!");
+        })
+        .catch((error) => {
+            console.error("Error writing document: ", error);
+        });
     }
 
     render() {
