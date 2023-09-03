@@ -1,3 +1,22 @@
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDVQKXXRW05itXToTtt78yiFXjITVkMty0",
+  authDomain: "keep-d4a67.firebaseapp.com",
+  projectId: "keep-d4a67",
+  storageBucket: "keep-d4a67.appspot.com",
+  messagingSenderId: "333465798452",
+  appId: "1:333465798452:web:4aa807989f8cbc5dc1c761"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Initialize the FirebaseUI Widget using Firebase.
+const auth = firebase.auth()
+
+// Initialize Cloud Firestore and get a reference to the service
+const db = firebase.firestore();
+console.log(db)
 class Note {
     constructor(id, title, text) {
         this.id = id;
@@ -5,16 +24,17 @@ class Note {
         this.text = text;
     }
 }
-
 class App {
     constructor() {
         // localStorage.setItem('test',JSON.stringify(['123']))
         // console.log(JSON.parse(localStorage.getItem('test')))
-        this.notes = JSON.parse(localStorage.getItem('notes')) || []
-        console.log(this.notes)
-        this.notes = [new Note("abc1", "test Title", "test Text")]
+        this.notes = []
+        // console.log(this.notes)
+        // this.notes = [new Note("abc1", "test Title", "test Text")]
         this.$selectedNoteId = ""
         this.miniSidebar = true
+        this.userId - ""
+
 
         this.$activeForm = document.querySelector(".active-form")
         this.$inactiveForm = document.querySelector(".inactive-form")
@@ -30,7 +50,73 @@ class App {
         this.$sidebar = document.querySelector(".sidebar")
         this.$sidebarActiveItem = document.querySelector(".active-item")
 
+
+        this.$app = document.querySelector("#app")
+        this.$firebaseAuthContainer = document.querySelector("#firebaseui-auth-container")
+        this.$authUserText = document.querySelector(".auth-user")
+        this.$logoutButton = document.querySelector(".logout")
+
+        // Initialize the FirebaseUI Widget using Firebase.
+        this.ui = new firebaseui.auth.AuthUI(auth);
+
+        this.haddleAuth()
         this.addEventListeners()
+        this.displayNotes()
+    }
+
+    haddleAuth() {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              console.log(user.uid)  
+              this.userId = user.uid
+              this.$authUserText.innerHTML = user.displayName
+              this.redirectToApp()
+            } else {
+              // User is signed out
+              this.redirectToAuth()
+            }
+          });
+    }
+
+    handleSignout() {
+        firebase.auth().signOut().then(() => {
+            // Sign-out successful.
+            this.redirectToAuth()
+          }).catch((error) => {
+            // An error happened.
+            console.log("ERROR OCCURED", error)
+          });
+    }
+    redirectToApp() {
+        this.$firebaseAuthContainer.style.display = "none"
+        this.$app.style.display = "block"
+        this.fetchNotesFromDB()
+    }
+
+    redirectToAuth() {
+        this.$firebaseAuthContainer.style.display = "block"
+        this.$app.style.display = "none"
+
+        this.ui.start('#firebaseui-auth-container', {
+            callbacks: {
+                signInSuccessWithAuthResult: (authResult, redirectUrl) => {
+                  // User successfully signed in.
+                  // Return type determines whether we continue the redirect automatically
+                  // or whether we leave that to developer to handle.
+                  console,log(userId)
+                  this.userId = authResult.user.uid
+                  this.$authUserText.innerHTML = user.displayName
+                  this.redirectToApp()
+                  return true;
+                }
+            },
+
+            signInOptions: [
+              firebase.auth.EmailAuthProvider.PROVIDER_ID,
+              firebase.auth.GoogleAuthProvider.PROVIDER_ID
+            ],
+            // Other config options...
+          });
     }
 
     addEventListeners() {
@@ -45,7 +131,7 @@ class App {
             event.preventDefault()
             const title = this.$noteTitle.value
             const text = this.$noteText.value
-            this.addNotes({title, text})
+            this.addNote({title, text})
             this.closeInactiveForm()
         })
 
@@ -61,6 +147,10 @@ class App {
             this.handleToggleSidebar()
         })
 
+        this.$logoutButton.addEventListener("click", (event) => {
+            this.handleSignout()
+        })
+
     }
 
     handleFormClickEvent(event) {
@@ -73,7 +163,7 @@ class App {
            this.openActiveForm()
         }
         else if(!isInactiveFormClickedOn && !isActiveFormClickedOn) {
-            this.addNotes({title, text})
+            this.addNote({title, text})
             this.closeInactiveForm()
         }
     }
@@ -123,9 +213,9 @@ class App {
         this.$noteText.value = ""
     }
 
-    addNotes({title,text}) {
+    addNote({title,text}) {
         if(text != "") {
-            const newNote = new Note(cuid(), title, text)
+            const newNote = {id:cuid(), title, text}
             this.notes = [...this.notes, newNote]
             this.render()
         }
@@ -181,8 +271,43 @@ class App {
         }
     }
 
+    fetchNotesFromDB() {
+    var docRef = db.collection("users").doc(this.userId);
+
+    docRef.get().then((doc) => {
+        if (doc.exists) {
+            console.log("Document data:", doc.data().notes);
+            this.notes = doc.data().notes
+            this.displayNotes()
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+            db.collection("users").doc(this.userId).set({
+                notes: []
+            })
+                .then(() => {
+                    console.log("User successfully created!");
+                })
+                .catch((error) => {
+                    console.error("Error writing document: ", error);
+                });
+        }
+    }).catch((error) => {
+        console.log("Error getting document:", error);
+    });
+    }
+
     saveNotes() {
-        localStorage.setItem('test',JSON.stringify(this.notes))
+        // Add a new document in collection "users"
+    db.collection("users").doc(this.userId).set({
+        notes: this.notes
+    })
+        .then(() => {
+            console.log("Document successfully written!");
+        })
+        .catch((error) => {
+            console.error("Error writing document: ", error);
+        });
     }
 
     render() {
