@@ -17,19 +17,6 @@ const auth = firebase.auth()
 // Initialize Cloud Firestore and get a reference to the service
 const db = firebase.firestore();
 console.log(db)
-
-// var docRef = db.collection("users").doc("actuallySignedinUser");
-
-// docRef.get().then((doc) => {
-//     if (doc.exists) {
-//         console.log("Document data:", doc.data().notes);
-//     } else {
-//         // doc.data() will be undefined in this case
-//         console.log("No such document!");
-//     }
-// }).catch((error) => {
-//     console.log("Error getting document:", error);
-// });
 class Note {
     constructor(id, title, text) {
         this.id = id;
@@ -103,6 +90,7 @@ class App {
     redirectToApp() {
         this.$firebaseAuthContainer.style.display = "none"
         this.$app.style.display = "block"
+        this.fetchNotesFromDB()
     }
 
     redirectToAuth() {
@@ -281,6 +269,32 @@ class App {
             this.$sidebarActiveItem.classList.remove("sidebar-active-item")
             this.miniSidebar = "true"
         }
+    }
+
+    fetchNotesFromDB() {
+    var docRef = db.collection("users").doc(this.userId);
+
+    docRef.get().then((doc) => {
+        if (doc.exists) {
+            console.log("Document data:", doc.data().notes);
+            this.notes = doc.data().notes
+            this.displayNotes()
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+            db.collection("users").doc(this.userId).set({
+                notes: []
+            })
+                .then(() => {
+                    console.log("User successfully created!");
+                })
+                .catch((error) => {
+                    console.error("Error writing document: ", error);
+                });
+        }
+    }).catch((error) => {
+        console.log("Error getting document:", error);
+    });
     }
 
     saveNotes() {
